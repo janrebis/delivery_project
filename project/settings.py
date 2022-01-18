@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-k6ef)xi#l&9=_15r_id$rxu3=a=_6aeh9_u4bzr(n&!kkpoiz(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['kubernetes.docker.internal',
-                 ]
+ALLOWED_HOSTS = [ ]
 
 
 # Application definition
@@ -41,7 +40,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'delivery_app',
     'rest_framework.authtoken',
-    'reportlab',
 
 ]
 

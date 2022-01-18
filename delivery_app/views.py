@@ -1,5 +1,6 @@
 import io
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet, ModelViewSet
 from .models import Package
@@ -10,8 +11,7 @@ from django.http import HttpResponse
 
 class UserRegistrationAPIView(ViewSet):
     serializer_class = UserRegistrationSerializer
-    authentication_classes = []
-    permission_classes = []
+
 
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -38,30 +38,17 @@ class PackageViewSet(ModelViewSet):
     serializer_class = PackageSerializer
     queryset = Package.objects.all()
 
-
-def generate_pdf(request):
-
-    serializer = PackageSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        sender = serializer.data['sender']
-        recipent_name = serializer.data['recipent_name']
-        recipent_surname = serializer.data['recipent_surname']
-        street = serializer.data['street']
-        house_number = serializer.data['house_number']
-        apartment_number = serializer.data['apartment_number']
-        city = serializer.data['city']
-        country = serializer.data['country']
-
+    @action(detail=True, methods=['get', ])
+    def generate_pdf(self, request, pk, *args, **kwargs):
+        serializer = PackageSerializer(data=request.data)
+        instance = self.get_object()
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
         p = canvas.Canvas(response)
-        p.drawString(100, 100, f"Sender: {sender}, /n Recipent: {recipent_name} {recipent_surname} /n Adress: {street} {house_number}/{apartment_number}/n {city}/n {country}")
+        p.drawString(100, 100, f"Sender: {instance.sender}, /n Recipent: {instance.recipent_name} {instance.recipent_surname} /n Adress: {instance.street} {instance.house_number}/{instance.apartment_number}/n {instance.city}/n {instance.country}")
         p.showPage()
         p.save()
         return response
-
-
 
 
 
