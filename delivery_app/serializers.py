@@ -38,4 +38,3 @@ class UserLoginSerializer(serializers.Serializer):
         return jwt.encode({'id': user.id}, settings.SECRET_KEY, algorithm='HS256')
 
 
-
