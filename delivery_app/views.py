@@ -52,8 +52,6 @@ class PackageViewSet(ModelViewSet):
 
 class UserPasswordChange(ViewSet):
     serializer_class = PasswordChangeSerializer
-    authentication_classes = []
-    permission_classes = []
 
     def update(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
