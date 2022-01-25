@@ -5,13 +5,14 @@ from django.contrib.auth.models import User
 from . import models
 import jwt
 
+
 class PackageSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Package
         fields = "__all__"
 
-class UserRegistrationSerializer(serializers.ModelSerializer):
 
+class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
@@ -24,7 +25,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
-
     username = serializers.CharField()
     password = serializers.CharField()
 
@@ -38,3 +38,17 @@ class UserLoginSerializer(serializers.Serializer):
         return jwt.encode({'id': user.id}, settings.SECRET_KEY, algorithm='HS256')
 
 
+class PasswordChangeSerializer(serializers.Serializer):
+
+    new_password = serializers.CharField(required=True)
+    new_password2 = serializers.CharField(required=True)
+
+    def validate(self, attrs):
+        if attrs.get('new password') != attrs.get('new_password2'):
+            raise serializers.ValidationError("Passwords does not match")
+        return attrs
+
+    def update_password(self, instance):
+        instance.set_password(self.validated_data['new_password'])
+        instance.save()
+        return instance
